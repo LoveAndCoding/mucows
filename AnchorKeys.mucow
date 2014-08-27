@@ -5,6 +5,10 @@
 	Enables the use of keyboard up/down/left/right and page up/page down
 	keys to navigate between anchors on a page. Also contains a list of
 	anchor names to ignore during navigation.
+	
+	@name Anchor Keys
+	@author Andrew Hushbeck
+	@website http://widgets.mu
 -->
 <HTMLWidget name="Anchor Keys" formatNumber="2" localization="none"
 		creator="Andrew Hushbeck" defaultWidth="35" defaultHeight="35"
