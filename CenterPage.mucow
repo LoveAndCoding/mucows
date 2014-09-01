@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLWidget name="Center Page" formatNumber="2" localization="none" creator="Andrew Hushbeck" defaultWidth="35" defaultHeight="35" isResizable="false">
+	<parameters>
+		<info label="Vertically center your page in the browser"/>
+		<separator/>
+		<info label="More info at Widgets.Mu" linkURL="http://widgets.mu/se/CenterPage"/>
+	</parameters>
+	
+	<bodyEndHTML>
+<![CDATA[
+<script type="text/javascript">
+	(function(win, body) {
+		var page = $("#page")[0];
+		function recalc() {
+			var pageHeight = page.offsetHeight,
+				windowHeight = win.innerHeight,
+				diff = Math.max(0, windowHeight - pageHeight);
+			body.style.paddingTop = diff/2 + "px";
+			body.style.paddingBottom = "0px";
+		}
+		$(win).resize(recalc);
+		$(body).on("wp-page-height-change", recalc);
+		recalc();
+	})(window, document.body)
+</script>
+]]>
+	</bodyEndHTML>
+</HTMLWidget>
