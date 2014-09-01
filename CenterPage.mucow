@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Center Page
+	===
+	Centers a Muse page vertically in the browser window, even as the
+	browser or the page resizes.
+	
+	@name Center Page
+	@author Andrew Hushbeck
+	@website http://widgets.mu
+-->
 <HTMLWidget name="Center Page" formatNumber="2" localization="none" creator="Andrew Hushbeck" defaultWidth="35" defaultHeight="35" isResizable="false">
+	<!-- No parameters, but included some info -->
 	<parameters>
 		<info label="Vertically center your page in the browser"/>
 		<separator/>
 		<info label="More info at Widgets.Mu" linkURL="http://widgets.mu/se/CenterPage"/>
 	</parameters>
 	
+	<!--
+		This widget uses a special event "wp-page-height-change" which
+		is fired by accordions when they are opening or closing and
+		changing the height of the page. This is an undocumented event
+		fired by Muse, and isn't really something that should be relied
+		upon, but since I am using it for additional behavior only (for
+		resizing in case an accordion opens) I'm considering it a bit
+		closer to safe...ish.
+	-->
 	<bodyEndHTML>
 <![CDATA[
 <script type="text/javascript">
