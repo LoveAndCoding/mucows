@@ -69,21 +69,21 @@
 			case "vert":
 				// Sort items by vertical position top to bottom
 				sortFn = function (a, b) {
-					return $(a).offset().top > $(b).offset().top;
+					return $(a).offset().top - $(b).offset().top;
 				};
 				break;
 			case "horiz":
 				// Sort items by horizontal position left to right
 				sortFn = function (a, b) {
-					return $(a).offset().left > $(b).offset().left;
+					return $(a).offset().left - $(b).offset().left;
 				};
 				break;
 			default:
 				// Sort items from top left to bottom right
 				sortFn = function (a, b) {
 					if($(a).offset().top == $(b).offset().top)
-						return $(a).offset().left > $(b).offset().left;
-					return $(a).offset().top > $(b).offset().top;
+						return $(a).offset().left - $(b).offset().left;
+					return $(a).offset().top - $(b).offset().top;
 				};
 		}
 		anchors.sort(sortFn);
