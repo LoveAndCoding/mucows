@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Scroll Wheel Anchors
+	===
+	Changes the behavior of the mouse scroll wheel to jump up and down
+	between anchor points instead of small amounts of scrolling. Also
+	includes a "cooldown" period so that multiple scrolls don't cause
+	weird effects.
+	
+	@name Scroll Wheel Anchors
+	@author Andrew Hushbeck
+	@website http://widgets.mu
+-->
+<HTMLWidget name="Scroll Wheel Anchors" formatNumber="2" localization="none"
+		creator="Widgets.Mu" defaultWidth="35" defaultHeight="35"
+		isResizable="false">
+	
+	<parameters>
+		<separator/>
+		<info label="Enable a cooldown between anchor navigations" />
+		<bool name="cooldown" label="Cooldown" defaultValue="true">
+			<trueVal value="true"/>
+			<falseVal value="false" disableOptions="cooltime" />
+		</bool>
+		<number name="cooltime" label="Time Between (ms)" defaultValue="35" min="10" max="9999" />
+		<separator/>
+		<list name="order" label="Anchor Order" defaultValue="vert">
+			<value name="vert" label="Top to Bottom"/>
+			<value name="horiz" label="Left to Right"/>
+			<value name="both" label="Top Left to Bottom Right"/>
+		</list>
+		<text name="ignored" label="Ignored Anchor Names" defaultValue=" " />
+		<separator/>
+		<info label="Click Here for more info" linkURL="http://widgets.mu/se/ScrollWheelAnchors"/>
+	</parameters>
+	
+	<!--
+		All code is JS and relies on jQuery and some native Muse JS
+		functions. Placing code just before </body>
+		
+		Also, we include and use the jquery-mousewheel plugin to
+		normalize the different events and behavior.
+		Available @ https://github.com/brandonaaron/jquery-mousewheel
+	-->
+	<bodyEndHTML>
+<![CDATA[
+<script type="text/javascript">
+		/*! Copyright (c) 2013 Brandon Aaron (http://brandon.aaron.sh)
+		 * Licensed under the MIT License (LICENSE.txt).
+		 *
+		 * Version: 3.1.12
+		 *
+		 * Requires: jQuery 1.2.2+
+		 */
+		!function(a){"function"==typeof define&&define.amd?define(["jquery"],a):"object"==typeof exports?module.exports=a:a(jQuery)}(function(a){function b(b){var g=b||window.event,h=i.call(arguments,1),j=0,l=0,m=0,n=0,o=0,p=0;if(b=a.event.fix(g),b.type="mousewheel","detail"in g&&(m=-1*g.detail),"wheelDelta"in g&&(m=g.wheelDelta),"wheelDeltaY"in g&&(m=g.wheelDeltaY),"wheelDeltaX"in g&&(l=-1*g.wheelDeltaX),"axis"in g&&g.axis===g.HORIZONTAL_AXIS&&(l=-1*m,m=0),j=0===m?l:m,"deltaY"in g&&(m=-1*g.deltaY,j=m),"deltaX"in g&&(l=g.deltaX,0===m&&(j=-1*l)),0!==m||0!==l){if(1===g.deltaMode){var q=a.data(this,"mousewheel-line-height");j*=q,m*=q,l*=q}else if(2===g.deltaMode){var r=a.data(this,"mousewheel-page-height");j*=r,m*=r,l*=r}if(n=Math.max(Math.abs(m),Math.abs(l)),(!f||f>n)&&(f=n,d(g,n)&&(f/=40)),d(g,n)&&(j/=40,l/=40,m/=40),j=Math[j>=1?"floor":"ceil"](j/f),l=Math[l>=1?"floor":"ceil"](l/f),m=Math[m>=1?"floor":"ceil"](m/f),k.settings.normalizeOffset&&this.getBoundingClientRect){var s=this.getBoundingClientRect();o=b.clientX-s.left,p=b.clientY-s.top}return b.deltaX=l,b.deltaY=m,b.deltaFactor=f,b.offsetX=o,b.offsetY=p,b.deltaMode=0,h.unshift(b,j,l,m),e&&clearTimeout(e),e=setTimeout(c,200),(a.event.dispatch||a.event.handle).apply(this,h)}}function c(){f=null}function d(a,b){return k.settings.adjustOldDeltas&&"mousewheel"===a.type&&b%120===0}var e,f,g=["wheel","mousewheel","DOMMouseScroll","MozMousePixelScroll"],h="onwheel"in document||document.documentMode>=9?["wheel"]:["mousewheel","DomMouseScroll","MozMousePixelScroll"],i=Array.prototype.slice;if(a.event.fixHooks)for(var j=g.length;j;)a.event.fixHooks[g[--j]]=a.event.mouseHooks;var k=a.event.special.mousewheel={version:"3.1.12",setup:function(){if(this.addEventListener)for(var c=h.length;c;)this.addEventListener(h[--c],b,!1);else this.onmousewheel=b;a.data(this,"mousewheel-line-height",k.getLineHeight(this)),a.data(this,"mousewheel-page-height",k.getPageHeight(this))},teardown:function(){if(this.removeEventListener)for(var c=h.length;c;)this.removeEventListener(h[--c],b,!1);else this.onmousewheel=null;a.removeData(this,"mousewheel-line-height"),a.removeData(this,"mousewheel-page-height")},getLineHeight:function(b){var c=a(b),d=c["offsetParent"in a.fn?"offsetParent":"parent"]();return d.length||(d=a("body")),parseInt(d.css("fontSize"),10)||parseInt(c.css("fontSize"),10)||16},getPageHeight:function(b){return a(b).height()},settings:{adjustOldDeltas:!0,normalizeOffset:!0}};a.fn.extend({mousewheel:function(a){return a?this.bind("mousewheel",a):this.trigger("mousewheel")},unmousewheel:function(a){return this.unbind("mousewheel",a)}})});
+</script>
+<script type="text/javascript">
+	(function () {
+		// Convert anchor names the same way Muse does
+		function convertAnchorNames(name) {
+			return name.replace(/([A-Z])/g, function (a, c) {
+				return c.toLowerCase();
+			});
+		}
+		
+		var anchors = $('a:not([href])'),
+			ignoreList = "{param_ignored}".split(/\s*,\s*/),
+			dir = "{param_order}";
+		
+		if( ignoreList && ignoreList.length && !(ignoreList.length == 1 && ignoreList[0] == '') ) {
+			// We're ignoring some
+			for(var i in ignoreList) {
+				ignoreList[i] = convertAnchorNames(ignoreList[i]);
+			}
+			anchors = anchors.filter(function (i, el) {
+				return ignoreList.indexOf(el.id) < 0 ? el : null;
+			});
+		}
+		
+		// Sort
+		var sortFn;
+		switch (dir){
+			case "vert":
+				// Sort items by vertical position top to bottom
+				sortFn = function (a, b) {
+					return $(a).offset().top - $(b).offset().top;
+				};
+				break;
+			case "horiz":
+				// Sort items by horizontal position left to right
+				sortFn = function (a, b) {
+					return $(a).offset().left - $(b).offset().left;
+				};
+				break;
+			default:
+				// Sort items from top left to bottom right
+				sortFn = function (a, b) {
+					if($(a).offset().top == $(b).offset().top)
+						return $(a).offset().left - $(b).offset().left;
+					return $(a).offset().top - $(b).offset().top;
+				};
+		}
+		anchors.sort(sortFn);
+		
+		// Use the current window scroll position to figure out what
+		// anchors we are currently between, so we can determine
+		// next and previous anchors in our list
+		function findCurrentAnchor() {
+			if(dir == 'horiz') {
+				var currAt = $(window).scrollLeft(),
+					compVal = 'left';
+				
+			} else {
+				var currAt = $(window).scrollTop(),
+					compVal = 'top';
+			}
+			
+			var pos = 0;
+			anchors.each(function (i, el) {
+				if( $(el).offset()[compVal] > currAt) {
+					return false;
+				}
+				pos = i;
+			});
+			
+			return pos;
+		}
+		
+		// Trigger Muse anchor navigation to give anchor
+		function navigateTo(anchor) {
+			var a = document.createElement('a');
+			a.href = '#' + anchor.id;
+			a.className = 'anim_swing';
+			// This is the native Muse function for navigating
+			// to a hyperlink. THIS IS UNSAFE, but most reliable
+			// way to navigate consistently
+			Muse.Utils.processHyperlink(a);
+			return false;
+		}
+		
+		// Go to the next anchor
+		function nextAnchor() {
+			var i = findCurrentAnchor() + 1;
+			if(i < anchors.length) {
+				return navigateTo(anchors[i]);
+			}
+		}
+		
+		// Go to the previous anchor
+		function prevAnchor() {
+			var i = findCurrentAnchor() - 1;
+			if(i >= 0) {
+				return navigateTo(anchors[i]);
+			}
+		}
+		
+		var cooldown = false;
+		$(document).mousewheel(function (e) {
+			var oe = e.originalEvent || e;
+			// Modifier keys have very different effects with scroll wheels.
+			// Don't handle anything if any modifier keys are pressed
+			if(!cooldown && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
+				if(e.deltaY < 0 || e.deltaX > 0) {
+					// Scroll to the next anchor
+					var i = findCurrentAnchor(),
+						next = anchors[i + 1],
+						pos = dir == 'horiz' ? $(window).scollLeft() : $(window).scrollTop(),
+						offsetVal = dir == 'horiz' ? 'left' : 'top',
+						windowSize = dir == 'horiz' ? window.innerWidth : window.innerHeight,
+						amount = e.deltaY < 0 ? e.deltaY * e.deltaFactor * -1 : e.deltaX * e.deltaFactor;
+					
+					// Wait before we process more scroll wheel events
+					cooldown = {param_cooldown};
+					setTimeout(function () { cooldown = false; }, {param_cooltime});
+					return nextAnchor();
+					
+				} else if (e.deltaY > 0 || e.deltaX < 0) {
+					// Scroll to the previous anchor
+					var i = findCurrentAnchor(),
+						curr = anchors[i],
+						pos = dir == 'horiz' ? $(window).scollLeft() : $(window).scrollTop(),
+						offsetVal = dir == 'horiz' ? 'left' : 'top',
+						amount = e.deltaY > 0 ? e.deltaY * e.deltaFactor * -1 : e.deltaX * e.deltaFactor;
+					
+					// Wait before we process more scroll wheel events
+					cooldown = {param_cooldown};
+					setTimeout(function () { cooldown = false; }, {param_cooltime});
+					return prevAnchor();
+				}
+				
+			} else if(cooldown) {
+				// Don't scroll during cooldown at all
+				return false;
+			}
+		});
+		
+	})();
+</script>
+]]>
+	</bodyEndHTML>
+</HTMLWidget>
