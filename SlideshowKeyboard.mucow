@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Slideshow Keys
+	===
+	Enables the use of keyboard up/down/left/right to navigate a
+	slideshow or composition widget.
+	
+	@name Slideshow Keys
+	@author Andrew Hushbeck
+	@website http://widgets.mu
+-->
+<HTMLWidget name="Slideshow Keys" formatNumber="2" localization="none"
+		creator="Widgets.Mu" defaultWidth="35" defaultHeight="35"
+		isResizable="false">
+	
+	<parameters>
+		<info label="Enable left/right keyboard arrows for use on slideshows" />
+		<separator/>
+		<info label="Click Here for more info" linkURL="http://widgets.mu/se/SlideshowKeys"/>
+	</parameters>
+	
+	<!--
+		All code is JS and relies on jQuery and some native Muse JS
+		functions. Placing code just before </body>
+	-->
+	<bodyEndHTML>
+<![CDATA[
+<script type="text/javascript">
+	(function () {
+		
+		var hooks = [],
+			_setup = WebPro.Widget.SlideShowBase.prototype._setUp;
+		
+		// Hook into widgets while they are initializing so we can
+		// store the objects and call into them directly instead of
+		// trying to trick the system into going to the next slide
+		WebPro.Widget.SlideShowBase.prototype._setUp = function () {
+			hooks.push(this);
+			return _setup.apply(this, arguments);
+		};
+		
+		function changeSlide(goForward) {
+			for(var h in hooks) {
+				var slide = hooks[h];
+				// Lightboxes show when you hit "next" programmatically
+				// on them, so this just checks to make sure if it is a
+				// lightbox, that it is open
+				if(slide.options.contentLayout_runtime != 'lightbox' || slide._$sslbpOverlay.parent().is(':visible')) {
+					goForward ? slide._next() : slide._previous();
+				}
+			}
+		}
+		
+		// Handle all keydown events. Currently no focus
+		// distinctions are made
+		$(document.documentElement).keydown(function (e) {
+				if(e.keyCode == 37)
+					changeSlide();
+				else if (e.keyCode == 39)
+					changeSlide(true);
+			});
+		
+	})();
+</script>
+]]>
+	</bodyEndHTML>
+</HTMLWidget>
