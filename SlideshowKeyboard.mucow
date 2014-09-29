@@ -46,7 +46,7 @@
 				// on them, so this just checks to make sure if it is a
 				// lightbox, that it is open
 				if(slide.options.contentLayout_runtime != 'lightbox' || slide._$sslbpOverlay.parent().is(':visible')) {
-					goForward ? slide._next() : slide._previous();
+					goForward ? slide.next() : slide.previous();
 				}
 			}
 		}
