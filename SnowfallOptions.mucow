@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Snowfall Options
+	===
+	Change the options for the Muse Snowman Easter Egg
+	
+	@name Snowfall Options
+	@author Andrew Hushbeck
+	@website https://widgets.mu
+-->
+<HTMLWidget name="Snowfall" formatNumber="2"
+		localization="none" creator="Widgets.Mu"
+		isResizable="false" defaultWidth="35" defaultHeight="35">
+	<parameters>
+		<separator/>
+		<info label="Change the settings for the Muse Snowman Easter Egg"/>
+		<separator/>
+		<info label="Number of Snowflakes"/>
+		<number min="0" max="99999" defaultValue="10" label="Starting" name="start"/>
+		<bool name="locked" label="Add More" defaultValue="false">
+			<trueVal value="false"/>
+			<falseVal value="true" disableOptions="min,max"/>
+		</bool>
+		<number min="0" max="99999" defaultValue="0" label="Minimum" name="min"/>
+		<number min="0" max="99999" defaultValue="2000" label="Maximum" name="max"/>
+		<separator/>
+		<info label="SnowPile Options"/>
+		<bool name="showPile" label="Start With Snow" defaultValue="pileStart:21,pileVary:3">
+			<trueVal value="pileStart:21,pileVary:3"/>
+			<falseVal value="pileStart:0,pileVary:0"/>
+		</bool>
+		<bool name="pileUp" label="Snow Piles Up" defaultValue="true">
+			<trueVal value="true"/>
+			<falseVal value="false"/>
+		</bool>
+		<separator/>
+		<info label="Learn More" linkURL="https://blog.widgets.mu/adobe-muse-easter-eggs/"/>
+		<info label="More Widgets" linkURL="https://widgets.mu"/>
+	</parameters>
+	
+	<bodyEndHTML>
+<![CDATA[<script type="text/javascript">
+	if(Snowfall) { // Make sure we have the easter egg loaded
+		Snowfall.setOptions({
+			min: {param_min},
+			max: {param_max},
+			starting: {param_start},
+			lock: {param_locked},
+			pileUp: {param_pileUp},
+			{param_showPile}
+		});
+	}
+</script>]]>
+	</bodyEndHTML>
+	
+</HTMLWidget>
