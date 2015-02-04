@@ -103,7 +103,7 @@
 			
 			var pos = 0;
 			anchors.each(function (i, el) {
-				if( $(el).offset()[compVal] > currAt) {
+				if( Math.floor($(el).offset()[compVal]) > currAt) {
 					return false;
 				}
 				pos = i;
