@@ -117,7 +117,7 @@
 			
 			var pos = 0;
 			anchors.each(function (i, el) {
-				if( $(el).offset()[compVal] > currAt) {
+				if( Math.floor($(el).offset()[compVal]) > currAt) {
 					return false;
 				}
 				pos = i;
@@ -164,7 +164,7 @@
 					// Scroll to the next anchor
 					var i = findCurrentAnchor(),
 						next = anchors[i + 1],
-						pos = dir == 'horiz' ? $(window).scollLeft() : $(window).scrollTop(),
+						pos = dir == 'horiz' ? $(window).scrollLeft() : $(window).scrollTop(),
 						offsetVal = dir == 'horiz' ? 'left' : 'top',
 						windowSize = dir == 'horiz' ? window.innerWidth : window.innerHeight,
 						amount = e.deltaY < 0 ? e.deltaY * e.deltaFactor * -1 : e.deltaX * e.deltaFactor;
@@ -178,7 +178,7 @@
 					// Scroll to the previous anchor
 					var i = findCurrentAnchor(),
 						curr = anchors[i],
-						pos = dir == 'horiz' ? $(window).scollLeft() : $(window).scrollTop(),
+						pos = dir == 'horiz' ? $(window).scrollLeft() : $(window).scrollTop(),
 						offsetVal = dir == 'horiz' ? 'left' : 'top',
 						amount = e.deltaY > 0 ? e.deltaY * e.deltaFactor * -1 : e.deltaX * e.deltaFactor;
 					
